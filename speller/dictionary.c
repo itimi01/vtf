@@ -54,7 +54,7 @@ unsigned int hash(const char *word)
     {
         sum += tolower(word[j]);
     }
-    return sum % N ;
+    return sum % N;
 }
 
 // Loads dictionary into memory, returning true if successful, else false
@@ -64,6 +64,7 @@ bool load(const char *dictionary)
     FILE *file = fopen(dictionary, "r");
     if (file == NULL)
     {
+        printf("Could not open file\n");
         return false;
     }
 
@@ -109,24 +110,25 @@ unsigned int size(void)
     return 0;
 }
 
+// Freeing with recursion
+void setfree(node *n)
+{
+    if (n->next != NULL)
+    {
+        setfree(n->next);
+    }
+    free(n);
+}
+
 // Unloads dictionary from memory, returning true if successful, else false
 bool unload(void)
 {
     for (int i = 0; i < N; i++)
     {
-        node *cursor = table[i];
-
-        while (cursor != NULL)
+        if (table[i] != NULL)
         {
-            node *tmp = cursor;
-            cursor = cursor->next;
-            free(tmp);
-        }
-        if (table[i] == NULL)
-        {
-            return true;
+            setfree(table[i]);
         }
     }
-
-    return false;
+    return true;
 }
